@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeafLens</title>
+    <style>
+        html {
+    scroll-behavior: smooth;
+}
+            body {
+            height: 100%;
+            margin: 0px;
+            padding-top: 60px;
+            font-family:cursive;
+            padding: 20px;
+            background-image: url('bg.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            color: white;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: hsla(0, 0%, 0%, 0.259); /* White background with 50% opacity */
+            z-index: -1;
+            
+        }
+
+            
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+           
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 80%;
+           
+        }
+
+        .image-container {
+            margin: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+       
+        
+            
+        #imageUpload,#uploadedImage,#predbtn{
+            margin-top: 5px;
+            margin-left: 50px;
+            border: 2px rgb(233, 229, 229) solid;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 6px;
+            background-color: #58575742;
+        padding: 5px;}
+        #label {
+            margin-top: 5px;
+            margin-left: 50px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+        #predbtn{
+            background-color:#3ec01d;
+            color: white;
+            font-size: 25px;
+        }
+    
+        #predbtn:hover{
+            color:#8ceb74;
+        }
+        #predictionResult {
+            text-align: center;
+            font-size: 25px;
+            color: rgb(255, 255, 255);
+            margin-left: 50px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            font-weight: bold;
+            
+        }
+        
+        h1{
+            text-align: left;
+            font-size: 1.5rem;
+            color: white;
+        }
+        #h{
+            font-size: 2.5rem;
+            color: rgb(203, 240, 72);
+        }
+    #phara{
+        display: flex;
+        justify-content: center;
+        color: white;
+    }
+
+    /* Menu Bar Styles */
+    .navbar {
+    
+    overflow: hidden;
+    position:fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: background-color 0.3s;
+}
+
+.navbar-list {
+    list-style-type: none;
+    display: flex;
+    justify-content: right;
+    padding-right: 40px;
+}
+
+.navbar-item {
+    padding: 14px 20px;
+}
+
+.navbar-item a {
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+}
+
+.navbar-item a:hover {
+    background-color: #8ceb74; /* Slightly darker green with 70% opacity */
+    transition: background-color 0.3s;
+}
+
+
+
+
+.about-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .slider-container {
+            width: 45%;
+            position: relative;
+        }
+
+        .slide img {
+            width: 100%;
+            height: auto;
+        }
+        .text-container {
+            width: 45%;
+            padding: 20px;
+        }
+        .text-container p {
+            line-height: 1.6;
+            color: #ffffff;
+        }
+        .abouthead{
+            padding-top: 180px;
+        }
+
+        #descbtn {
+
+         
+
+            margin-top: 5px;
+            margin-left: 50px;
+            border: 2px rgb(233, 229, 229) solid;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 6px;
+            background-color: #1d85c0;
+            color: white;
+            font-size: 20px;
+            padding: 5px;
+        }
+        #descbtn:hover {
+            color: #74cbec;
+        }
+        #descriptionResult {
+            text-align: center;
+            font-size: 20px;
+            color: black;
+            margin-left: 50px;
+            margin-top: 10px;
+            font-weight: bold;
+            background: white;
+        }
+
+    </style>
+</head>
+<body>
+    <section id="home">
+        <div>
+            <h1><span id="h">L</span>eaf<span id="h">L</span>ens☘️</h1>
+        </div>
+        <div class="main-container">
+            <div class="container">
+                <label for="input" id="label">Limit 200mb per file. jpg, jpeg, png</label>
+                <label for="input" id="label">Upload an image</label>
+                <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
+                <div class="image-container">
+                    <img id="uploadedImage" src="" alt="Uploaded Image">
+                </div id='predspace'>
+                <div class="controls">
+                    <button onclick="classifyImage()" id="predbtn">Prediction</button>
+                </div>
+                <div class="result" id="predictionResult"></div>
+                <button onclick="getDescription()" id="descbtn" style="display: none;">Get Description</button>
+                <div id="descriptionResult"></div>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        let currentPrediction = "";
+
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const output = document.getElementById('uploadedImage');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function classifyImage() {
+            const imageInput = document.getElementById('imageUpload');
+            if (imageInput.files && imageInput.files[0]) {
+                const formData = new FormData();
+                formData.append('image', imageInput.files[0]);
+
+                fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    currentPrediction = data.prediction;
+                    document.getElementById('predictionResult').innerText = `Prediction: ${currentPrediction}`;
+                    document.getElementById('descbtn').style.display = 'block';
+                    document.getElementById('descriptionResult').innerText = ""; // Clear previous description
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        function formatDescription(rawDescription) {
+    // Initialize formatted output
+    let formatted = '';
+
+    // Split the raw description into lines
+    const lines = rawDescription.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+    // Iterate over each line to format it
+    for (let line of lines) {
+        // Add a header for the disease
+        if (line.toLowerCase().startsWith('##')) {
+            formatted += `<h2>${line.replace(/## /, '')}</h2>`;
+        } else if (line.toLowerCase().startsWith('**symptoms:**')) {
+            formatted += `<h3>${line}</h3>`;
+        } else if (line.toLowerCase().startsWith('**treatment:**')) {
+            formatted += `<h3>${line}</h3>`;
+        } else if (line.startsWith('*')) {
+            // Convert bullet points
+            formatted += `<li>${line.replace(/\*/g, '').trim()}</li>`;
+        } else {
+            // Treat other lines as paragraphs
+            formatted += `<p>${line}</p>`;
+        }
+    }
+
+    // Wrap bullet points in a list
+    formatted = formatted.replace(/<li>(.*?)<\/li>/g, '<ul><li>$1</li></ul>').replace(/<\/ul><ul>/g, '');
+
+    return formatted;
+}
+
+        function getDescription() {
+            const prediction = document.getElementById('descbtn').dataset.prediction;
+            fetch('http://127.0.0.1:5000/description', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prediction: currentPrediction })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const formattedDescription = formatDescription(data.description);
+        document.getElementById('descriptionResult').innerHTML = formattedDescription; 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+
+</html>
