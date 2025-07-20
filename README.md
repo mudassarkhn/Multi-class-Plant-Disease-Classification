@@ -1,7 +1,7 @@
 # 🍃 LeafLens - Plant Disease Classification 🌿
-![screenshots1](screenshots\Screenshot1.png)
-![](screenshots\Screenshot2.png)
-![](screenshots\Screenshot3.png)
+![s](screenshots/Screenshot1.png)
+![s](screenshots/Screenshot2.png)
+![s](screenshots/Screenshot3.png)
 
 ## Introduction
 Welcome to **LeafLens**, a powerful and user-friendly application for identifying plant diseases from leaf images using a Convolutional Neural Network (CNN) model. This project combines a Flask backend API with a sleek frontend interface to provide accurate disease predictions and detailed descriptions.
